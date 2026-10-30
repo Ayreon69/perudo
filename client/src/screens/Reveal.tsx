@@ -8,6 +8,7 @@ import { Button } from '../components/Ui';
 import { sfx } from '../lib/sound';
 import { cls, plural, secondsLeft, useTick, vibrate } from '../lib/util';
 import { send } from '../net';
+import { serverNow } from '../store';
 
 /** Le temps du cri plein écran, puis celui d'un dé compté. Le serveur attend au moins autant avant de passer à la suite. */
 const STAMP_MS = 1250;
@@ -62,15 +63,22 @@ export function RevealScreen({ view, r, canReady }: { view: RoomView; r: RoundVi
     }));
     return list;
   }, [rv]);
-  const [stage, setStage] = useState<'stamp' | 'count' | 'done'>('stamp');
-  const [counted, setCounted] = useState(0);
+  // Arrivé après le décompte (page rechargée) : pas de cri ni de compte, on montre directement le verdict.
+  const [late] = useState(() => serverNow() >= r.revealMinAt);
+  const [stage, setStage] = useState<'stamp' | 'count' | 'done'>(late ? 'done' : 'stamp');
+  const [counted, setCounted] = useState(late ? matches.length : 0);
   const target = rv.bid.qty;
 
+  // Une seule fois par manche : le serveur renvoie un nouvel objet reveal à chaque diffusion (un joueur prêt, un message…), et ça ne doit pas relancer le compte.
   useEffect(() => {
+    if (late) return;
     const ids: ReturnType<typeof setTimeout>[] = [];
-    if (rv.kind === 'dudo') sfx.dudo();
-    else sfx.calza();
-    vibrate([70, 50, 140]);
+    // Différé : le double montage de StrictMode en dev l'annule, le cri ne part qu'une fois.
+    ids.push(setTimeout(() => {
+      if (rv.kind === 'dudo') sfx.dudo();
+      else sfx.calza();
+      vibrate([70, 50, 140]);
+    }, 0));
     ids.push(setTimeout(() => {
       setStage('count');
       sfx.lift();
@@ -96,7 +104,8 @@ export function RevealScreen({ view, r, canReady }: { view: RoomView; r: RoundVi
       } else sfx.slam();
     }, start + matches.length * STEP_MS + 250));
     return () => ids.forEach(clearTimeout);
-  }, [rv, matches, view.me]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const v = verdict(rv, view);
   const lit = new Set(matches.slice(0, counted));
