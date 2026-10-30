@@ -2,6 +2,8 @@
 
 **Cinq dés, un gobelet, et tout le monde ment.**
 
+👉 **Jouer : https://perudo-f6x0.onrender.com** (la première ouverture peut prendre jusqu'à une minute, le temps que le serveur gratuit se réveille)
+
 Jeu multijoueur en ligne de bluff, à jouer entre amis depuis un navigateur, sur téléphone ou ordinateur, sans compte ni installation.
 D'après *Perudo*, le jeu de dés sud-américain édité par Asmodee (projet de fans, non officiel, avec ses propres visuels).
 
