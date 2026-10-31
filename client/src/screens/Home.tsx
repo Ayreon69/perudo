@@ -1,6 +1,6 @@
 // Accueil : l'affiche, le gobelet qui s'agite, pseudo + avatar, créer / rejoindre une table, entraînement, règles.
 import { motion } from 'framer-motion';
-import { BookOpen, Bot, LogIn, Plus } from 'lucide-react';
+import { BookOpen, Bot, House, LogIn, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { AVATARS } from '../../../shared/protocol';
 import { AVATAR_EMOJI, AVATAR_LABELS, CupAndDice, useHeroLoop } from '../components/Dice';
@@ -49,6 +49,9 @@ export function Home() {
 
   return (
     <Poster className="home">
+      <a className="all-games" href="https://akhis-games.onrender.com">
+        <House size={16} aria-hidden /> Tous les jeux
+      </a>
       <header className="home-hero">
         <motion.div initial={{ opacity: 0, scale: 1.25, rotate: -4 }} animate={{ opacity: 1, scale: 1, rotate: -2 }} transition={{ type: 'spring', stiffness: 170, damping: 13 }}>
           <Logo size="lg" />
